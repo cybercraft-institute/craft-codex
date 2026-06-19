@@ -34,3 +34,15 @@ export interface PlacementsPersistedState {
   poses: Record<string, Pose>;
   updatedAt: number;
 }
+
+/**
+ * Cursor der geführten Anleitung (getrennt vom step-Fortschritt in
+ * ProgressEntry, damit erledigte Schritte ein Cursor-Schema-Update überleben).
+ */
+export interface WorkflowCursorState {
+  /** Index des aktuellen Schritts. */
+  index: number;
+  /** checklistItemId → abgehakt. */
+  checkedItems: Record<string, boolean>;
+  updatedAt: number;
+}

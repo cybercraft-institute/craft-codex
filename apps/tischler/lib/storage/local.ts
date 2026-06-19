@@ -11,6 +11,7 @@ import type {
   ProgressEntry,
   ModesPersistedState,
   PlacementsPersistedState,
+  WorkflowCursorState,
 } from "./types.js";
 import type { DovetailStep, Pose } from "@craft-codex/core";
 
@@ -18,6 +19,7 @@ const KEY_SESSION = "craft-codex:dovetail:session";
 const KEY_PROGRESS = "craft-codex:dovetail:progress";
 const KEY_MODES = "craft-codex:surface:modes";
 const KEY_PLACEMENTS = "craft-codex:tracking:placements";
+const KEY_WORKFLOW = "craft-codex:dovetail:workflow";
 
 function isBrowser(): boolean {
   return typeof window !== "undefined" && !!window.localStorage;
@@ -94,4 +96,15 @@ export function clearPlacement(targetId: string): void {
 
 export function clearAllPlacements(): void {
   safeSet(KEY_PLACEMENTS, { poses: {}, updatedAt: Date.now() });
+}
+
+export function loadWorkflow(): WorkflowCursorState | null {
+  return safeGet<WorkflowCursorState>(KEY_WORKFLOW);
+}
+
+export function saveWorkflow(state: {
+  index: number;
+  checkedItems: Record<string, boolean>;
+}): void {
+  safeSet(KEY_WORKFLOW, { ...state, updatedAt: Date.now() });
 }
