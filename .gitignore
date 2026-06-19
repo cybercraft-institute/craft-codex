@@ -21,6 +21,9 @@ next-env.d.ts
 .idea/
 .DS_Store
 
+# Claude Code (local agent settings, launch config)
+.claude/
+
 # Test
 coverage/
 test-results/

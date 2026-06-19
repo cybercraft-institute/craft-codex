@@ -10,6 +10,7 @@
   },
   "packageManager": "pnpm@9.15.0",
   "scripts": {
+    "predev": "pnpm --filter @craft-codex/core build",
     "dev": "pnpm --filter @craft-codex/tischler dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
