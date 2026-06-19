@@ -92,12 +92,12 @@ export function CADViewer({
           top: 8,
           left: 8,
           zIndex: 2,
-          background: "#ffffff",
-          border: "1px solid #e3e5e8",
-          borderRadius: 6,
+          background: "var(--overlay-bg)",
+          backdropFilter: "var(--overlay-blur)",
+          border: "1px solid var(--cci-hairline)",
           padding: "0.4rem 0.6rem",
           fontSize: "0.85rem",
-          color: "#0b0d10",
+          color: "var(--color-heading)",
           display: "flex",
           alignItems: "center",
           gap: "0.5rem",
@@ -110,11 +110,10 @@ export function CADViewer({
           onChange={(e) => handleSelect(e.target.value)}
           aria-label="CAD-Modell auswählen"
           style={{
-            border: "1px solid #e3e5e8",
-            borderRadius: 4,
+            border: "1px solid var(--input-border)",
             padding: "0.2rem 0.4rem",
-            background: "#fafafa",
-            color: "#0b0d10",
+            background: "var(--input-bg)",
+            color: "var(--color-heading)",
           }}
         >
           <option value="">— kein Modell —</option>
@@ -132,9 +131,8 @@ export function CADViewer({
         style={{
           width,
           height,
-          background: "#fafafa",
-          border: "1px solid #e3e5e8",
-          borderRadius: 8,
+          background: "#0a0a0a",
+          border: "1px solid var(--cci-hairline)",
           display: "block",
         }}
       >
@@ -179,7 +177,7 @@ export function CADViewer({
             alignItems: "center",
             justifyContent: "center",
             pointerEvents: "none",
-            color: "#6B7280",
+            color: "var(--color-text-muted)",
             fontSize: "0.95rem",
           }}
         >

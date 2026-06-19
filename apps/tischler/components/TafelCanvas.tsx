@@ -69,7 +69,7 @@ export function TafelCanvas({
   mode,
   width,
   height,
-  color = "#0b0d10",
+  color = "#f4f4f6",
   size = 6,
 }: TafelCanvasProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -197,9 +197,8 @@ export function TafelCanvas({
         onPointerCancel={handlePointerCancel}
         onPointerLeave={handlePointerUp}
         style={{
-          background: "#fafafa",
-          border: "1px solid #e3e5e8",
-          borderRadius: 8,
+          background: "#15151a",
+          border: "1px solid var(--cci-hairline)",
           display: "block",
           touchAction: "none",
           cursor: "crosshair",
@@ -220,10 +219,10 @@ export function TafelCanvas({
           top: 8,
           right: 8,
           padding: "0.4rem 0.8rem",
-          border: "1px solid #e3e5e8",
-          borderRadius: 6,
-          background: "#ffffff",
-          color: "#0b0d10",
+          border: "1px solid var(--cci-hairline)",
+          background: "var(--overlay-bg)",
+          backdropFilter: "var(--overlay-blur)",
+          color: "var(--color-heading)",
           fontSize: "0.85rem",
           cursor: "pointer",
         }}

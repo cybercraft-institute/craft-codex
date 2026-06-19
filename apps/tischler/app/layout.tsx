@@ -12,6 +12,17 @@ const outfit = localFont({
   variable: "--font-outfit",
 });
 
+// IBM Plex Mono — CCI-Monoschrift (Latenzen, Code-Snippets). Ebenfalls
+// vendored, kein externer Request. Zwei statische Schnitte (400/500).
+const ibmPlexMono = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-mono-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/ibm-plex-mono-500.woff2", weight: "500", style: "normal" },
+  ],
+  display: "swap",
+  variable: "--font-ibm-plex-mono",
+});
+
 export const metadata: Metadata = {
   title: "Craft Codex · Tischler — Wissenspool fürs Handwerk",
   description:
@@ -24,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="de" className={outfit.variable}>
+    <html lang="de" className={`${outfit.variable} ${ibmPlexMono.variable}`}>
       <body>
         <SiteHeader />
         {children}

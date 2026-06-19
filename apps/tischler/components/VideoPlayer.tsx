@@ -173,17 +173,17 @@ export function VideoPlayer({
           aria-label={uiState.playing ? "Pause" : "Play"}
           style={{
             padding: "6px 14px",
-            background: "#0063B2",
-            color: "#fff",
+            background: "var(--cci-yellow)",
+            color: "var(--color-on-accent)",
             border: "none",
-            borderRadius: 4,
+            fontWeight: 600,
             cursor: uiState.currentSrc ? "pointer" : "not-allowed",
             opacity: uiState.currentSrc ? 1 : 0.5,
           }}
         >
           {uiState.playing ? "Pause" : "Play"}
         </button>
-        <span style={{ color: "#6B7280" }}>
+        <span style={{ color: "var(--color-text-muted)" }}>
           {formatTime(uiState.position)} / {formatTime(uiState.duration)}
         </span>
       </div>

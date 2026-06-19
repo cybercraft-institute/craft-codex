@@ -1,36 +1,107 @@
 /*
- * Craft Codex Designsystem — „CyberCraft"
+ * Craft Codex Designsystem — „CyberCraft Institute" (dark)
  *
- * Style-Transfer von cybercraft.institute: Schwarz / Weiß / Signalgelb
- * (#ffed00), Outfit, harte Kanten, harte Schatten. Handwerk × Digital.
+ * Kanonische CCI-Optik (cci-styles): dunkler Vertikal-Verlauf, EIN gelber
+ * Akzent (#ffed00), Outfit + IBM Plex Mono, scharfe Kanten, halbtransparente
+ * „Frosted"-Panels mit weichem Schatten. Handwerk × Digital.
  *
- * Offline-Doktrin: keine externen Fonts/CDNs zur Laufzeit — Outfit liegt
- * vendored unter app/fonts/ und wird via next/font/local gebundelt.
+ * Die `.cc-*`-Klassennamen der App bleiben erhalten — sie tragen jetzt die
+ * CCI-Sprache. Tokens unten spiegeln tokens.css/cci.css; die Legacy-`--cc-*`-
+ * Aliase sind auf die dunkle Palette umgelegt, damit Inline-Styles (z. B.
+ * var(--cc-yellow), var(--cc-muted)) ohne Markup-Änderung mitziehen.
+ *
+ * Offline-Doktrin: keine externen Fonts/CDNs zur Laufzeit — Outfit und
+ * IBM Plex Mono liegen vendored unter app/fonts/ und werden via
+ * next/font/local gebundelt.
  */
 
 :root {
+  /* — CCI Markenpalette — */
+  --cci-black: #0e0e10;
+  --cci-white: #ffffff;
+  --cci-yellow: #ffed00; /* der eine Akzent */
+  --cci-yellow-soft: rgba(255, 237, 0, 0.14);
+  --cci-text-highlight: #ffed0066;
+  --cci-ink: #f4f4f6;
+  --cci-body: #c7c7cd;
+  --cci-muted: #a4a4ac;
+  --cci-hairline: rgba(255, 255, 255, 0.16);
+
+  /* — Semantische Farben (Dark Theme) — */
+  --color-bg: #0e0e10;
+  --color-surface: rgba(255, 255, 255, 0.04); /* Panels / Karten / „Fenster" */
+  --color-surface-alt: rgba(255, 255, 255, 0.07);
+  --color-border: rgba(255, 255, 255, 0.16);
+  --color-text: #c7c7cd;
+  --color-heading: #f4f4f6;
+  --color-text-muted: #a4a4ac;
+  --color-primary: #f4f4f6; /* helle „Tinte" — für helle Buttons */
+  --color-accent: #ffed00;
+  --color-on-primary: #111114;
+  --color-on-accent: #111114;
+  --color-highlight: var(--cci-yellow-soft);
+  --color-danger: #ff6b6b;
+  --color-danger-soft: rgba(255, 107, 107, 0.1);
+  --color-success: #4ade80;
+
+  /* — Formularfelder (frosted, halbtransparent) — */
+  --input-bg: rgba(255, 255, 255, 0.06);
+  --input-border: rgba(255, 255, 255, 0.28);
+
+  /* — Overlay / Popup („frosted glass") —
+     Schwebende „Fenster" über dem Seiteninhalt. backdrop-filter UNPREFIXED
+     lassen (Bundler ergänzt -webkit-) und auf das positionierte Element selbst
+     setzen, nie auf ein Kind — sonst komponiert der Blur die Seite nicht. */
+  --overlay-bg: rgba(0, 0, 0, 0.65);
+  --overlay-blur: blur(16px) saturate(1.1);
+
+  /* — Typografie — */
+  --font-sans:
+    var(--font-outfit), "Outfit", system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  --font-mono:
+    var(--font-ibm-plex-mono), "IBM Plex Mono", ui-monospace, "SFMono-Regular",
+    Menlo, monospace;
+
+  /* — Abstands-Skala — */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  /* — Radius & Elevation (scharfe Kanten; nur Pills/Avatare rund) — */
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-full: 999px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.35);
+
+  --cc-header-h: 64px;
+  /* Site-weiter Hintergrund-Verlauf (auf body; fixed). */
+  --cci-gradient: linear-gradient(to bottom, #60606a 0%, #0e0e10 100%);
+
+  /* — Legacy-Aliase: alte --cc-* auf die dunkle Palette umgelegt, damit
+     Inline-Styles in Komponenten/Seiten ohne Änderung mitziehen. — */
   --cc-yellow: #ffed00;
   --cc-yellow-press: #e6d500;
-  --cc-black: #0a0a0a;
-  --cc-ink: #181715;
-  --cc-muted: #5c5a54;
-  --cc-paper: #ffffff;
-  --cc-gray: #f0f0f0;
-  --cc-line: #0a0a0a;
-  --cc-line-soft: #d9d7d2;
-  --cc-good: #1a7f37;
-  --cc-bad: #c62828;
-  --cc-header-h: 60px;
+  --cc-black: #0e0e10;
+  --cc-ink: var(--color-heading);
+  --cc-muted: var(--color-text-muted);
+  --cc-paper: var(--color-surface);
+  --cc-gray: var(--color-surface-alt);
+  --cc-line: var(--cci-hairline);
+  --cc-line-soft: var(--cci-hairline);
+  --cc-good: var(--color-success);
+  --cc-bad: var(--color-danger);
 
-  /* Legacy-Aliase — Komponenten/Seiten, die noch var(--color-*) nutzen,
-     fallen sauber auf die neue Palette statt ins Leere. */
-  --color-bg: var(--cc-paper);
-  --color-fg: var(--cc-ink);
-  --color-muted: var(--cc-muted);
-  --color-border: var(--cc-line-soft);
-  --color-accent: var(--cc-yellow);
+  --color-fg: var(--color-heading);
+  --color-card: var(--color-surface);
   --color-accent-warm: #b58900;
-  --color-card: var(--cc-paper);
+
+  color-scheme: dark;
 }
 
 * {
@@ -41,26 +112,34 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--cc-paper);
-  color: var(--cc-ink);
-  font-family:
-    var(--font-outfit), "Outfit", system-ui, -apple-system, "Segoe UI",
-    sans-serif;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
 body {
   min-height: 100dvh;
+  /* Fixed, damit der Verlauf den Viewport deckt und nicht unter langen Seiten kachelt. */
+  background: var(--cci-gradient) no-repeat fixed;
+  background-color: var(--color-bg);
 }
 
 ::selection {
-  background: var(--cc-yellow);
-  color: var(--cc-black);
+  background: var(--cci-text-highlight);
 }
 
 a {
-  color: inherit;
+  color: var(--color-heading);
   text-decoration: none;
+  transition: color 120ms;
+}
+
+a:hover,
+a:focus-visible {
+  text-decoration: underline solid var(--cci-yellow);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 button {
@@ -68,18 +147,24 @@ button {
   cursor: pointer;
 }
 
+code,
+pre,
+kbd {
+  font-family: var(--font-mono);
+}
+
 :focus-visible {
-  outline: 3px solid var(--cc-yellow);
+  outline: 2px solid var(--cci-yellow);
   outline-offset: 2px;
-  box-shadow: 0 0 0 5px var(--cc-black);
 }
 
 h1,
 h2,
 h3 {
-  font-weight: 800;
+  color: var(--color-heading);
+  font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.05;
+  line-height: 1.1;
   margin: 0;
   text-wrap: balance;
 }
@@ -95,19 +180,26 @@ h3 {
   align-items: center;
   gap: 1.5rem;
   padding: 0 1.25rem;
-  background: var(--cc-paper);
-  border-bottom: 2px solid var(--cc-black);
+  /* Frosted-Sticky: dunkles Glas über dem Verlauf, Hairline-Kante. */
+  background: var(--overlay-bg);
+  backdrop-filter: var(--overlay-blur);
+  border-bottom: 1px solid var(--cci-hairline);
 }
 
 .cc-logo {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 1.05rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
   white-space: nowrap;
+  color: var(--color-heading);
+}
+
+.cc-logo:hover,
+.cc-logo:focus-visible {
+  text-decoration: none;
 }
 
 .cc-logo svg {
@@ -117,58 +209,61 @@ h3 {
 .cc-nav {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 1.25rem;
   margin-left: auto;
   flex-wrap: wrap;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 500;
 }
 
 .cc-nav a {
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.45rem 0.7rem;
-  border: 2px solid transparent;
+  padding: 0.25rem 0;
+  color: var(--color-heading);
 }
 
 .cc-nav a:hover {
-  border-color: var(--cc-black);
+  text-decoration: underline solid var(--cci-yellow);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 .cc-nav a[aria-current="page"] {
-  background: var(--cc-yellow);
-  border-color: var(--cc-black);
+  text-decoration: underline solid var(--cci-yellow);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 .cc-footer {
   margin-top: 4rem;
-  background: var(--cc-black);
-  color: var(--cc-paper);
+  border-top: 1px solid var(--cci-hairline);
   padding: 2.5rem 1.5rem;
 }
 
 .cc-footer-claim {
   font-size: clamp(1.4rem, 3.5vw, 2.2rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.02em;
+  color: var(--color-heading);
 }
 
 .cc-footer-claim em {
   font-style: normal;
-  color: var(--cc-yellow);
+  color: var(--cci-yellow);
 }
 
 .cc-footer-meta {
   margin-top: 1rem;
   font-size: 0.8rem;
-  color: #b8b6b0;
+  color: var(--color-text-muted);
   display: flex;
   gap: 1.25rem;
   flex-wrap: wrap;
 }
 
 .cc-footer-meta a {
-  color: var(--cc-yellow);
+  color: var(--cci-yellow);
 }
 
 .cc-footer-meta a:hover {
@@ -182,44 +277,44 @@ h3 {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--cc-ink);
+  color: var(--color-heading);
 }
 
 .cc-kicker::before {
   content: "";
   width: 0.7em;
   height: 0.7em;
-  background: var(--cc-yellow);
-  border: 2px solid var(--cc-black);
+  background: var(--cci-yellow);
   flex: none;
 }
 
 .cc-mark {
-  background: var(--cc-yellow);
-  color: var(--cc-black);
+  background: var(--cci-yellow);
+  color: var(--color-on-accent);
   padding: 0 0.18em;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 
 .cc-muted {
-  color: var(--cc-muted);
+  color: var(--color-text-muted);
 }
 
 .cc-mono {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
 }
 
-/* ---------- Karten ---------- */
+/* ---------- Karten / Panels („Fenster") ---------- */
 
 .cc-card {
-  background: var(--cc-paper);
-  border: 2px solid var(--cc-black);
-  box-shadow: 4px 4px 0 var(--cc-black);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
   padding: 1.25rem;
 }
 
@@ -228,38 +323,43 @@ h3 {
 }
 
 .cc-card--gray {
-  background: var(--cc-gray);
+  background: var(--color-surface-alt);
 }
 
 .cc-card--dark {
-  background: var(--cc-black);
-  color: var(--cc-paper);
-  box-shadow: 4px 4px 0 var(--cc-yellow);
+  background: var(--overlay-bg);
+  backdrop-filter: var(--overlay-blur);
+  color: var(--color-text);
+  border-color: var(--cci-hairline);
+  box-shadow: var(--shadow-md);
 }
 
 a.cc-card {
   display: block;
   color: inherit;
   transition:
-    transform 120ms ease,
-    box-shadow 120ms ease;
+    border-color 130ms ease,
+    box-shadow 130ms ease,
+    transform 130ms ease;
 }
 
 a.cc-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0 var(--cc-black);
+  border-color: var(--color-heading);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  text-decoration: none;
 }
 
 a.cc-card:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--cc-black);
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .cc-card-num {
   font-size: 0.8rem;
-  font-weight: 800;
-  background: var(--cc-black);
-  color: var(--cc-yellow);
+  font-weight: 700;
+  background: var(--cci-yellow);
+  color: var(--color-on-accent);
   padding: 0.15rem 0.45rem;
   display: inline-block;
 }
@@ -271,66 +371,84 @@ a.cc-card:active {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 700;
+  padding: 0.6rem 1.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--cc-black);
-  background: var(--cc-paper);
-  border: 2px solid var(--cc-black);
-  box-shadow: 3px 3px 0 var(--cc-black);
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  /* Default = Ghost: transparent, Hairline. */
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-border);
   transition:
-    transform 100ms ease,
-    box-shadow 100ms ease;
+    border-color 120ms ease,
+    background 120ms ease,
+    color 120ms ease;
 }
 
 .cc-btn:hover:not(:disabled) {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 var(--cc-black);
-}
-
-.cc-btn:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0 var(--cc-black);
+  border-color: var(--color-heading);
+  color: var(--color-heading);
+  text-decoration: none;
 }
 
 .cc-btn:disabled {
   cursor: not-allowed;
-  color: var(--cc-muted);
-  border-color: var(--cc-line-soft);
-  box-shadow: none;
-  background: var(--cc-gray);
+  opacity: 0.45;
 }
 
+/* Primär = helle „Tinte", dunkler Text, gelber Unterbalken (CCI). */
 .cc-btn--primary {
-  background: var(--cc-yellow);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: none;
+  border-bottom: 3px solid var(--cci-yellow);
 }
 
-.cc-btn--primary:active:not(:disabled) {
-  background: var(--cc-yellow-press);
+.cc-btn--primary:hover:not(:disabled) {
+  background: #ffffff;
+  color: var(--color-on-primary);
 }
 
+.cc-btn--primary:disabled {
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  border-bottom-color: var(--cci-hairline);
+}
+
+/* Dark-Variante → der kräftigste Akzent: gelbe Fläche, dunkler Text. */
 .cc-btn--dark {
-  background: var(--cc-black);
-  color: var(--cc-paper);
+  background: var(--cci-yellow);
+  color: var(--color-on-accent);
+  border: none;
+}
+
+.cc-btn--dark:hover:not(:disabled) {
+  background: #fff14d;
+  color: var(--color-on-accent);
 }
 
 .cc-btn--dark:disabled {
-  background: var(--cc-gray);
-  color: var(--cc-muted);
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
 }
 
 .cc-btn--sm {
-  padding: 0.35rem 0.7rem;
-  font-size: 0.75rem;
-  box-shadow: 2px 2px 0 var(--cc-black);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.72rem;
 }
 
 .cc-btn--danger {
-  color: var(--cc-bad);
-  border-color: var(--cc-bad);
-  box-shadow: 2px 2px 0 var(--cc-bad);
+  color: var(--color-danger);
+  border-color: rgba(255, 107, 107, 0.5);
+  background: transparent;
+}
+
+.cc-btn--danger:hover:not(:disabled) {
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
 }
 
 /* ---------- Tabs (Lernschritte, Surface-Modes) ---------- */
@@ -347,25 +465,33 @@ a.cc-card:active {
   gap: 0.4rem;
   padding: 0.45rem 0.85rem;
   font-size: 0.85rem;
-  font-weight: 600;
-  background: var(--cc-paper);
-  color: var(--cc-ink);
-  border: 2px solid var(--cc-black);
+  font-weight: 500;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-bottom-width: 3px;
+  border-bottom-color: transparent;
+  transition:
+    color 120ms ease,
+    background 120ms ease,
+    border-color 120ms ease;
 }
 
 .cc-tab:hover {
-  background: var(--cc-gray);
+  color: var(--color-heading);
+  background: var(--color-surface);
 }
 
 .cc-tab[aria-selected="true"] {
-  background: var(--cc-yellow);
-  font-weight: 800;
-  box-shadow: 2px 2px 0 var(--cc-black);
+  background: var(--color-surface-alt);
+  color: var(--color-heading);
+  font-weight: 600;
+  border-bottom-color: var(--cci-yellow);
 }
 
 .cc-tab-step {
   font-size: 0.65rem;
-  font-weight: 800;
+  font-weight: 700;
   opacity: 0.55;
 }
 
@@ -373,22 +499,27 @@ a.cc-card:active {
 
 .cc-chip {
   font-size: 0.74rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.3rem 0.65rem;
-  background: var(--cc-paper);
-  color: var(--cc-ink);
-  border: 1.5px solid var(--cc-black);
-  border-radius: 999px;
+  background: var(--input-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    color 120ms ease;
 }
 
 .cc-chip:hover:not(:disabled) {
-  background: var(--cc-yellow);
+  border-color: var(--color-heading);
+  color: var(--color-heading);
+  background: var(--color-surface-alt);
 }
 
 .cc-chip:disabled {
   cursor: not-allowed;
-  color: var(--cc-muted);
-  border-color: var(--cc-line-soft);
+  opacity: 0.45;
 }
 
 .cc-badge {
@@ -396,28 +527,31 @@ a.cc-card:active {
   align-items: center;
   gap: 0.35rem;
   font-size: 0.62rem;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0.2rem 0.5rem;
-  border: 1.5px solid var(--cc-black);
-  background: var(--cc-gray);
-  color: var(--cc-ink);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
 }
 
 .cc-badge--yellow {
-  background: var(--cc-yellow);
+  background: var(--cci-yellow);
+  color: var(--color-on-accent);
+  border-color: var(--cci-yellow);
 }
 
 .cc-badge--dark {
-  background: var(--cc-black);
-  color: var(--cc-yellow);
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--cci-yellow);
+  border-color: rgba(255, 237, 0, 0.5);
 }
 
 .cc-badge--good {
-  background: var(--cc-good);
-  color: var(--cc-paper);
-  border-color: var(--cc-good);
+  background: transparent;
+  color: var(--color-success);
+  border-color: rgba(74, 222, 128, 0.5);
 }
 
 /* ---------- Formulare ---------- */
@@ -427,21 +561,26 @@ a.cc-card:active {
   padding: 0.55rem 0.7rem;
   font-family: inherit;
   font-size: 0.9rem;
-  color: var(--cc-ink);
-  background: var(--cc-paper);
-  border: 2px solid var(--cc-black);
+  color: var(--color-heading);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
 }
 
 .cc-input::placeholder {
-  color: var(--cc-muted);
+  color: var(--color-text-muted);
+}
+
+.cc-input:focus-visible {
+  outline: 2px solid var(--cci-yellow);
+  outline-offset: 0;
+  border-color: var(--color-heading);
 }
 
 .cc-input:disabled {
-  background: var(--cc-gray);
-  border-color: var(--cc-line-soft);
+  opacity: 0.45;
 }
 
-/* Range-Slider: schwarze Schiene, gelber Vierkant-Daumen */
+/* Range-Slider: Hairline-Schiene, gelber Vierkant-Daumen */
 
 .cc-range {
   appearance: none;
@@ -453,7 +592,7 @@ a.cc-card:active {
 
 .cc-range::-webkit-slider-runnable-track {
   height: 4px;
-  background: var(--cc-black);
+  background: var(--input-border);
 }
 
 .cc-range::-webkit-slider-thumb {
@@ -461,8 +600,8 @@ a.cc-card:active {
   width: 18px;
   height: 18px;
   margin-top: -7px;
-  background: var(--cc-yellow);
-  border: 2px solid var(--cc-black);
+  background: var(--cci-yellow);
+  border: 1px solid var(--color-on-accent);
   cursor: grab;
 }
 
@@ -473,15 +612,15 @@ a.cc-card:active {
 
 .cc-range::-moz-range-track {
   height: 4px;
-  background: var(--cc-black);
+  background: var(--input-border);
 }
 
 .cc-range::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 0;
-  background: var(--cc-yellow);
-  border: 2px solid var(--cc-black);
+  background: var(--cci-yellow);
+  border: 1px solid var(--color-on-accent);
   cursor: grab;
 }
 
@@ -492,32 +631,34 @@ a.cc-card:active {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .cc-status-dot {
   width: 10px;
   height: 10px;
-  border: 2px solid var(--cc-black);
-  background: var(--cc-line-soft);
+  border: 1px solid var(--cci-hairline);
+  background: var(--color-surface-alt);
   flex: none;
 }
 
 .cc-status-dot--on {
-  background: var(--cc-yellow);
+  background: var(--cci-yellow);
+  border-color: var(--cci-yellow);
 }
 
 .cc-status-dot--good {
-  background: var(--cc-good);
+  background: var(--color-success);
+  border-color: var(--color-success);
 }
 
 /* ---------- 3D-Bühne ---------- */
 
 .cc-stage {
   position: relative;
-  background: var(--cc-black);
-  border: 2px solid var(--cc-black);
-  box-shadow: 4px 4px 0 var(--cc-yellow);
+  background: #0a0a0a;
+  border: 1px solid var(--cci-hairline);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
   min-height: 0;
 }
@@ -531,7 +672,8 @@ a.cc-card:active {
   gap: 1rem;
   height: calc(100dvh - var(--cc-header-h));
   padding: 1rem;
-  background: var(--cc-gray);
+  /* Transparent — der body-Verlauf trägt die Werkstatt. */
+  background: transparent;
 }
 
 .cc-workbench-rail {
