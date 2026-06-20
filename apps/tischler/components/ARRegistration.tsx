@@ -21,6 +21,32 @@ export interface RegistrationResult {
   rmsError: number;
 }
 
+const AXIS_LEN = 0.06;
+const AXIS_R = 0.0022;
+
+/** XYZ-Achsenkreuz (X rot, Y grün, Z blau) mit Ursprung im Gruppen-Nullpunkt. */
+function AxisGizmo() {
+  return (
+    <group>
+      {/* X — rot, entlang +X */}
+      <mesh position={[AXIS_LEN / 2, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+        <cylinderGeometry args={[AXIS_R, AXIS_R, AXIS_LEN, 10]} />
+        <meshBasicMaterial color="#ff5555" />
+      </mesh>
+      {/* Y — grün, entlang +Y */}
+      <mesh position={[0, AXIS_LEN / 2, 0]}>
+        <cylinderGeometry args={[AXIS_R, AXIS_R, AXIS_LEN, 10]} />
+        <meshBasicMaterial color="#4ade80" />
+      </mesh>
+      {/* Z — blau, entlang +Z */}
+      <mesh position={[0, 0, AXIS_LEN / 2]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[AXIS_R, AXIS_R, AXIS_LEN, 10]} />
+        <meshBasicMaterial color="#4d8bff" />
+      </mesh>
+    </group>
+  );
+}
+
 const PROMPTS = [
   "Ecke 1/3 — Hirnholz-Seite, eine Ecke",
   "Ecke 2/3 — gleiche Stirnkante, andere Ecke",
@@ -42,7 +68,7 @@ export function ARRegistration({
   params: DovetailParams;
   onRegistered: (result: RegistrationResult) => void;
 }) {
-  const tipRef = useRef<THREE.Mesh>(null);
+  const tipRef = useRef<THREE.Group>(null);
   const [captured, setCaptured] = useState<Vec3[]>([]);
 
   const right = useXRInputSourceState("controller", "right");
@@ -98,19 +124,18 @@ export function ARRegistration({
 
   return (
     <>
-      {/* Sonde: dünner Stiel entlang der Zeigeachse + Kugel an der Spitze,
-          ~7 cm vor dem Controller. tipRef ist die Kugel — ihre Weltposition
-          wird beim Trigger erfasst. */}
+      {/* Sonde: dünner Stiel entlang der Zeigeachse + XYZ-Achsenkreuz an der
+          Spitze (~7 cm vor dem Controller). Der Kreuzungspunkt ist der präzise
+          Erfassungspunkt — tipRef liefert seine Weltposition beim Trigger. */}
       {probeSpace && (
         <XRSpace space={probeSpace}>
           <mesh position={[0, 0, -0.035]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.0018, 0.0018, 0.07, 12]} />
-            <meshBasicMaterial color="#ffed00" />
+            <cylinderGeometry args={[0.0015, 0.0015, 0.07, 12]} />
+            <meshBasicMaterial color="#a4a4ac" />
           </mesh>
-          <mesh ref={tipRef} position={[0, 0, -0.07]}>
-            <sphereGeometry args={[0.006, 16, 16]} />
-            <meshBasicMaterial color="#ffed00" />
-          </mesh>
+          <group ref={tipRef} position={[0, 0, -0.07]}>
+            <AxisGizmo />
+          </group>
         </XRSpace>
       )}
 

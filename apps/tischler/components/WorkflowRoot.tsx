@@ -87,13 +87,12 @@ function ImmersiveView({
   store: ReturnType<typeof createXRStore>;
   caps: DeviceCapabilities;
 }) {
-  const enter = async (mode: "ar" | "vr") => {
+  const enterAR = async () => {
     try {
-      const session =
-        mode === "ar" ? await store.enterAR() : await store.enterVR();
-      if (!session) console.warn(`[XR] enter${mode.toUpperCase()}: no session`);
+      const session = await store.enterAR();
+      if (!session) console.warn("[XR] enterAR: no session");
     } catch (e) {
-      console.error(`[XR] enter${mode.toUpperCase()} failed:`, e);
+      console.error("[XR] enterAR failed:", e);
     }
   };
 
@@ -123,31 +122,15 @@ function ImmersiveView({
       <section className="cc-card" style={{ marginTop: "1.5rem" }}>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
           <Capability label="Immersive AR" supported={caps.xrAr} />
-          <Capability label="Immersive VR" supported={caps.xrVr} />
         </div>
-        <div
-          style={{
-            marginTop: "1.25rem",
-            display: "flex",
-            gap: "0.75rem",
-            flexWrap: "wrap",
-          }}
-        >
+        <div style={{ marginTop: "1.25rem" }}>
           <button
             type="button"
             disabled={!caps.xrAr}
-            onClick={() => enter("ar")}
+            onClick={enterAR}
             className="cc-btn cc-btn--primary"
           >
             Enter AR
-          </button>
-          <button
-            type="button"
-            disabled={!caps.xrVr}
-            onClick={() => enter("vr")}
-            className="cc-btn"
-          >
-            Enter VR
           </button>
         </div>
         <p className="cc-muted" style={{ marginTop: "1rem", fontSize: "0.8rem" }}>
