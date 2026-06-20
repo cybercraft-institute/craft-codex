@@ -35,6 +35,7 @@ const cross = (a: Vec3, b: Vec3): Vec3 => [
   a[2] * b[0] - a[0] * b[2],
   a[0] * b[1] - a[1] * b[0],
 ];
+const scaleV = (a: Vec3, s: number): Vec3 => [a[0] * s, a[1] * s, a[2] * s];
 function normalize(a: Vec3): Vec3 | null {
   const l = len(a);
   if (l < 1e-9) return null;
@@ -140,6 +141,45 @@ export function solveRigidFrom3Points(
   if (!Fm || !Fw) return null;
 
   const R = mul(Fw, transpose(Fm)); // R = F_world · F_modelᵀ
+  const rotation = matToQuat(R);
+  const position = sub(world[0], applyMat(R, model[0]));
+  const transform: RigidTransform = { position, rotation, rmsError: 0 };
+
+  let sumSq = 0;
+  for (let i = 0; i < 3; i++) {
+    const d = sub(applyRigid(transform, model[i]!), world[i]!);
+    sumSq += dot(d, d);
+  }
+  transform.rmsError = Math.sqrt(sumSq / 3);
+  return transform;
+}
+
+/**
+ * Wie solveRigidFrom3Points, aber die Ergebnis-Ebene wird auf die Welt-Horizontale
+ * gezwungen (Modell-Hochachse → `up`). Nur Ursprung (Punkt 0) und die horizontale
+ * Richtung von Punkt 0→1 bestimmen die Lage; Punkt 2 ist nur visuelle Stütze.
+ * So bleibt das Brett immer eben, egal wie schief die realen Punkte getroffen
+ * wurden. `rmsError` misst die so entfernte Schieflage.
+ */
+export function solveLeveledFrame(
+  model: [Vec3, Vec3, Vec3],
+  world: [Vec3, Vec3, Vec3],
+  up: Vec3 = [0, 1, 0],
+): RigidTransform | null {
+  const Fm = frameFromPoints(model[0], model[1], model[2]);
+  const upN = normalize(up);
+  if (!Fm || !upN) return null;
+
+  // Welt-Frame, auf die Horizontale nivelliert: x = horizontale Richtung 0→1,
+  // z = up, y = z × x.
+  const xRaw = sub(world[1], world[0]);
+  const x = normalize(sub(xRaw, scaleV(upN, dot(xRaw, upN))));
+  if (!x) return null; // Punkt 1 liegt senkrecht über Punkt 0
+  const z = upN;
+  const y = cross(z, x);
+  const Fw = colsToMat(x, y, z);
+
+  const R = mul(Fw, transpose(Fm));
   const rotation = matToQuat(R);
   const position = sub(world[0], applyMat(R, model[0]));
   const transform: RigidTransform = { position, rotation, rmsError: 0 };

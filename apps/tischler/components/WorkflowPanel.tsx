@@ -15,6 +15,8 @@ export function WorkflowPanel({
   position = [0, 0.6, 0],
   onToggleRegister,
   registering = false,
+  worldAligned = false,
+  onToggleWorld,
   onExit,
 }: {
   wf: UseWorkflowResult;
@@ -22,6 +24,9 @@ export function WorkflowPanel({
   /** Öffnet/schließt die 3-Punkt-Ausrichtung (nur im Headset sinnvoll). */
   onToggleRegister?: () => void;
   registering?: boolean;
+  /** Welt-Ebene: Ausrichtung auf die Horizontale zwingen. */
+  worldAligned?: boolean;
+  onToggleWorld?: () => void;
   /** Beendet die XR-Session (zurück zur Seite). */
   onExit?: () => void;
 }) {
@@ -74,17 +79,26 @@ export function WorkflowPanel({
 
       {onToggleRegister && (
         <PanelButton
-          position={[-0.07, -0.185, 0]}
+          position={[-0.14, -0.185, 0]}
           label={registering ? "Abbrechen" : "◎ Ausrichten"}
           onClick={onToggleRegister}
-          width={0.22}
+          width={0.16}
           active={registering}
+        />
+      )}
+      {onToggleWorld && (
+        <PanelButton
+          position={[0.0, -0.185, 0]}
+          label={worldAligned ? "Welt ✓" : "Welt ✗"}
+          onClick={onToggleWorld}
+          width={0.11}
+          active={worldAligned}
         />
       )}
       {onExit && (
         <PanelButton
           position={[0.15, -0.185, 0]}
-          label="✕ Beenden"
+          label="✕"
           onClick={onExit}
           width={0.1}
         />

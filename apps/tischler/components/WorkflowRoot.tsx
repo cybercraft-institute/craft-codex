@@ -103,6 +103,7 @@ function ImmersiveView({
   );
   // 3-Punkt-Ausrichtung: präzise Pose, sobald registriert (echter Maßstab = 1).
   const [registering, setRegistering] = useState(false);
+  const [worldAligned, setWorldAligned] = useState(true);
   const [registration, setRegistration] = useState<RegistrationResult | null>(
     null,
   );
@@ -180,6 +181,8 @@ function ImmersiveView({
               position={[0, 1.78, -0.6]}
               registering={registering}
               onToggleRegister={() => setRegistering((v) => !v)}
+              worldAligned={worldAligned}
+              onToggleWorld={() => setWorldAligned((v) => !v)}
               onExit={() => {
                 void store.getState().session?.end();
               }}
@@ -191,6 +194,7 @@ function ImmersiveView({
             {registering && (
               <ARRegistration
                 params={params}
+                worldAligned={worldAligned}
                 onRegistered={(r) => {
                   setRegistration(r);
                   setRegistering(false);
