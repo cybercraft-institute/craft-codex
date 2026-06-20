@@ -22,8 +22,8 @@ interface DovetailSceneProps {
   contentWrapper?: (children: ReactNode) => ReactNode;
 }
 
-const SCALE_MM_TO_M = 0.001;
-const BOARD_SEPARATION_M = 0.15;
+export const SCALE_MM_TO_M = 0.001;
+export const BOARD_SEPARATION_M = 0.15;
 
 /**
  * Pure 3D-Scene-Inhalt — ohne Canvas, ohne XR-Wrapper.

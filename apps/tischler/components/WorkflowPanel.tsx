@@ -13,9 +13,14 @@ import type { UseWorkflowResult } from "../lib/workflow/useWorkflow";
 export function WorkflowPanel({
   wf,
   position = [0, 0.6, 0],
+  onToggleRegister,
+  registering = false,
 }: {
   wf: UseWorkflowResult;
   position?: [number, number, number];
+  /** Öffnet/schließt die 3-Punkt-Ausrichtung (nur im Headset sinnvoll). */
+  onToggleRegister?: () => void;
+  registering?: boolean;
 }) {
   const { step, state, steps } = wf;
   const done = wf.isComplete();
@@ -26,8 +31,8 @@ export function WorkflowPanel({
   return (
     <Billboard position={position}>
       {/* Panel-Hintergrund (frosted-dunkel) */}
-      <mesh position={[0, 0, -0.002]}>
-        <planeGeometry args={[0.46, 0.3]} />
+      <mesh position={[0, -0.05, -0.002]}>
+        <planeGeometry args={[0.46, 0.4]} />
         <meshBasicMaterial color="#0e0e10" transparent opacity={0.82} />
       </mesh>
       {/* gelber Akzentbalken oben */}
@@ -63,6 +68,16 @@ export function WorkflowPanel({
         active={done}
       />
       <PanelButton position={[0.14, -0.115, 0]} label="Weiter ▶" onClick={wf.next} width={0.13} accent />
+
+      {onToggleRegister && (
+        <PanelButton
+          position={[0, -0.185, 0]}
+          label={registering ? "Abbrechen" : "◎ Ausrichten (3 Pkt.)"}
+          onClick={onToggleRegister}
+          width={0.3}
+          active={registering}
+        />
+      )}
     </Billboard>
   );
 }

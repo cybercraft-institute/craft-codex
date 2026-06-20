@@ -12,6 +12,7 @@ import { XRStepBar } from "./XRStepBar";
 import { WorkflowPanel } from "./WorkflowPanel";
 import { WorkflowOverlay } from "./WorkflowOverlay";
 import { ARPlacement } from "./ARPlacement";
+import { ARRegistration, type RegistrationResult } from "./ARRegistration";
 import { DOVETAIL_WORKFLOW } from "../lib/workflow/dovetail-workflow";
 import { useWorkflow } from "../lib/workflow/useWorkflow";
 import {
@@ -101,7 +102,21 @@ function ImmersiveView({
   const [placement, setPlacement] = useState<[number, number, number] | null>(
     null,
   );
-  const groupPos: [number, number, number] = placement ?? [0, 1.2, -0.6];
+  // 3-Punkt-Ausrichtung: präzise Pose, sobald registriert (echter Maßstab = 1).
+  const [registering, setRegistering] = useState(false);
+  const [registration, setRegistration] = useState<RegistrationResult | null>(
+    null,
+  );
+
+  const registered = registration !== null;
+  // Beim Ausrichten/Registriert: echter Maßstab (1). Sonst 3× für Sichtbarkeit.
+  const groupScale = registering || registered ? 1 : 3;
+  const groupPosition: [number, number, number] = registration
+    ? registration.position
+    : (placement ?? [0, 1.2, -0.6]);
+  const groupQuat: [number, number, number, number] = registration
+    ? registration.quaternion
+    : [0, 0, 0, 1];
 
   return (
     <>
@@ -137,10 +152,17 @@ function ImmersiveView({
         </div>
         <p className="cc-muted" style={{ marginTop: "1rem", fontSize: "0.8rem" }}>
           „Enter AR“ startet die Passthrough-Session — Brett &amp; Anleitung
-          schweben in deinem Raum. Eine reale Fläche anvisieren und die
-          Griff-Taste drücken, um das Brett dort abzulegen. Schritte wechselst du
-          mit dem Trigger.
+          schweben in deinem Raum. <strong>Grob:</strong> Fläche anvisieren,
+          Griff-Taste legt das Brett ab. <strong>Präzise:</strong> „Ausrichten“
+          und drei reale Brettecken mit der Controllerspitze + Trigger antippen —
+          das Modell rastet aufs Werkstück. Schritte wechselst du mit dem Trigger.
         </p>
+        {registered && (
+          <p style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "var(--color-success)" }}>
+            Ausgerichtet · Restfehler ±{Math.round(registration.rmsError * 1000)}
+            mm
+          </p>
+        )}
       </section>
 
       <section
@@ -158,7 +180,11 @@ function ImmersiveView({
           style={{ background: "#0a0a0a" }}
         >
           <XR store={store}>
-            <group position={groupPos} scale={[3, 3, 3]}>
+            <group
+              position={groupPosition}
+              quaternion={groupQuat}
+              scale={[groupScale, groupScale, groupScale]}
+            >
               <DovetailSceneContents
                 params={params}
                 step={wf.stepId}
@@ -166,8 +192,25 @@ function ImmersiveView({
               />
               <XRStepBar active={wf.stepId} onChange={wf.goToStep} />
             </group>
-            <WorkflowPanel wf={wf} position={[0, 1.78, -0.6]} />
-            <ARPlacement onPlace={setPlacement} />
+            <WorkflowPanel
+              wf={wf}
+              position={[0, 1.78, -0.6]}
+              registering={registering}
+              onToggleRegister={() => setRegistering((v) => !v)}
+            />
+            {/* Grob-Platzierung nur außerhalb der Präzisions-Ausrichtung. */}
+            {!registering && !registered && (
+              <ARPlacement onPlace={setPlacement} />
+            )}
+            {registering && (
+              <ARRegistration
+                params={params}
+                onRegistered={(r) => {
+                  setRegistration(r);
+                  setRegistering(false);
+                }}
+              />
+            )}
           </XR>
         </Canvas>
       </section>
