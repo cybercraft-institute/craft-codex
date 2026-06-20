@@ -11,6 +11,7 @@ import { DovetailSceneContents } from "./DovetailScene";
 import { XRStepBar } from "./XRStepBar";
 import { WorkflowPanel } from "./WorkflowPanel";
 import { WorkflowOverlay } from "./WorkflowOverlay";
+import { ARPlacement } from "./ARPlacement";
 import { DOVETAIL_WORKFLOW } from "../lib/workflow/dovetail-workflow";
 import { useWorkflow } from "../lib/workflow/useWorkflow";
 import {
@@ -95,6 +96,13 @@ function ImmersiveView({
     }
   };
 
+  // Platzierung per Hit-Test (Griff-Taste). Vor dem ersten Platzieren schwebt
+  // das Brett auf Tischhöhe vor dem Nutzer.
+  const [placement, setPlacement] = useState<[number, number, number] | null>(
+    null,
+  );
+  const groupPos: [number, number, number] = placement ?? [0, 1.2, -0.6];
+
   return (
     <>
       <section className="cc-card" style={{ marginTop: "1.5rem" }}>
@@ -128,8 +136,10 @@ function ImmersiveView({
           </button>
         </div>
         <p className="cc-muted" style={{ marginTop: "1rem", fontSize: "0.8rem" }}>
-          Anleitung + Hologramm erscheinen in der Session. Brett ausrichten:
-          Hit-Test antippen, dann fein nachschieben (folgt). Auf Tischhöhe vor dir.
+          „Enter AR“ startet die Passthrough-Session — Brett &amp; Anleitung
+          schweben in deinem Raum. Eine reale Fläche anvisieren und die
+          Griff-Taste drücken, um das Brett dort abzulegen. Schritte wechselst du
+          mit dem Trigger.
         </p>
       </section>
 
@@ -140,12 +150,15 @@ function ImmersiveView({
       >
         <Canvas
           shadows
+          // alpha:true → der Renderer löscht transparent, damit in der AR-Session
+          // das Quest-Passthrough hinter der Szene sichtbar bleibt.
+          gl={{ alpha: true }}
           camera={{ position: [0.9, 1.9, 1.0], fov: 45 }}
           onCreated={({ camera }) => camera.lookAt(0, 1.4, -0.6)}
           style={{ background: "#0a0a0a" }}
         >
           <XR store={store}>
-            <group position={[0, 1.2, -0.6]} scale={[3, 3, 3]}>
+            <group position={groupPos} scale={[3, 3, 3]}>
               <DovetailSceneContents
                 params={params}
                 step={wf.stepId}
@@ -154,6 +167,7 @@ function ImmersiveView({
               <XRStepBar active={wf.stepId} onChange={wf.goToStep} />
             </group>
             <WorkflowPanel wf={wf} position={[0, 1.78, -0.6]} />
+            <ARPlacement onPlace={setPlacement} />
           </XR>
         </Canvas>
       </section>
