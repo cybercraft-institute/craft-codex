@@ -47,8 +47,10 @@ export function ARRegistration({
 
   const right = useXRInputSourceState("controller", "right");
   const left = useXRInputSourceState("controller", "left");
+  // Rechts bevorzugen (Dominanthand); targetRaySpace = die Zeigeachse des
+  // Controllers, sodass die Spitze VOR dem Controller liegt (nicht am Griff).
   const controller = right ?? left;
-  const gripSpace = controller?.inputSource?.gripSpace;
+  const probeSpace = controller?.inputSource?.targetRaySpace;
 
   // Modell-Referenzecken (Oberseite Brett A) im Gruppen-Lokalsystem (Meter,
   // Maßstab 1) — gleiche Reihenfolge wie die PROMPTS.
@@ -96,10 +98,16 @@ export function ARRegistration({
 
   return (
     <>
-      {/* Controller-Spitze als Sonde (4,5 cm vor dem Griff). */}
-      {gripSpace && (
-        <XRSpace space={gripSpace}>
-          <mesh ref={tipRef} position={[0, 0, -0.045]}>
+      {/* Sonde: dünner Stiel entlang der Zeigeachse + Kugel an der Spitze,
+          ~7 cm vor dem Controller. tipRef ist die Kugel — ihre Weltposition
+          wird beim Trigger erfasst. */}
+      {probeSpace && (
+        <XRSpace space={probeSpace}>
+          <mesh position={[0, 0, -0.035]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.0018, 0.0018, 0.07, 12]} />
+            <meshBasicMaterial color="#ffed00" />
+          </mesh>
+          <mesh ref={tipRef} position={[0, 0, -0.07]}>
             <sphereGeometry args={[0.006, 16, 16]} />
             <meshBasicMaterial color="#ffed00" />
           </mesh>
@@ -123,7 +131,7 @@ export function ARRegistration({
           anchorY="middle"
           maxWidth={0.7}
         >
-          {gripSpace
+          {probeSpace
             ? `Ausrichten · Spitze auf die Ecke, Trigger drücken\n${PROMPTS[promptIndex]}`
             : "Ausrichten braucht einen Controller"}
         </Text>

@@ -15,12 +15,15 @@ export function WorkflowPanel({
   position = [0, 0.6, 0],
   onToggleRegister,
   registering = false,
+  onExit,
 }: {
   wf: UseWorkflowResult;
   position?: [number, number, number];
   /** Öffnet/schließt die 3-Punkt-Ausrichtung (nur im Headset sinnvoll). */
   onToggleRegister?: () => void;
   registering?: boolean;
+  /** Beendet die XR-Session (zurück zur Seite). */
+  onExit?: () => void;
 }) {
   const { step, state, steps } = wf;
   const done = wf.isComplete();
@@ -71,11 +74,19 @@ export function WorkflowPanel({
 
       {onToggleRegister && (
         <PanelButton
-          position={[0, -0.185, 0]}
-          label={registering ? "Abbrechen" : "◎ Ausrichten (3 Pkt.)"}
+          position={[-0.07, -0.185, 0]}
+          label={registering ? "Abbrechen" : "◎ Ausrichten"}
           onClick={onToggleRegister}
-          width={0.3}
+          width={0.22}
           active={registering}
+        />
+      )}
+      {onExit && (
+        <PanelButton
+          position={[0.15, -0.185, 0]}
+          label="✕ Beenden"
+          onClick={onExit}
+          width={0.1}
         />
       )}
     </Billboard>

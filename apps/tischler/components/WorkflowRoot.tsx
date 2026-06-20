@@ -197,6 +197,9 @@ function ImmersiveView({
               position={[0, 1.78, -0.6]}
               registering={registering}
               onToggleRegister={() => setRegistering((v) => !v)}
+              onExit={() => {
+                void store.getState().session?.end();
+              }}
             />
             {/* Grob-Platzierung nur außerhalb der Präzisions-Ausrichtung. */}
             {!registering && !registered && (
